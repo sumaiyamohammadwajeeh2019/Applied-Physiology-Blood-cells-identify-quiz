@@ -1,0 +1,33 @@
+{
+  "name": "Blood 10 Cells Puzzle - Applied Physiology for MBBS",
+  "short_name": "Blood Puzzle",
+  "description": "Identify 10 blood cells by function: 5 WBCs + platelet + 4 abnormal RBCs. Clinical stems + real smears for MBBS students. By DR SM.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fef2f2",
+  "theme_color": "#b91c1c",
+  "lang": "en",
+  "categories": ["education", "medical"],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

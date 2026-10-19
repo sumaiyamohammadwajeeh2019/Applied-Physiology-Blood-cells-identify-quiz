@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://blood-10-cells-puzzle.onrender.com/sitemap.xml
