@@ -1,0 +1,23 @@
+services:
+  # Static Site - FREE on Render (no sleep, CDN, free TLS)
+  # Dashboard: New > Static Site > connect repo > Build: echo static > Publish: ./
+  - type: web
+    name: blood-10-cells-puzzle
+    runtime: static
+    branch: main
+    buildCommand: echo "static site - no build needed"
+    staticPublishPath: ./
+    headers:
+      - path: /index.html
+        name: Cache-Control
+        value: no-cache, no-store, must-revalidate
+      - path: /*.webp
+        name: Cache-Control
+        value: public, max-age=86400
+      - path: /*.jpg
+        name: Cache-Control
+        value: public, max-age=86400
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+

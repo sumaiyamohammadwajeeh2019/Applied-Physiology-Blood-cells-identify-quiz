@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Applied Physiology Related to Blood Cells for MBBS Students - DR SM</title>
+<style>
+body{margin:0;font-family:system-ui;background:#fef2f2;padding:10px}
+.header{background:#b91c1c;color:#fff;padding:14px;border-radius:16px;text-align:center}
+.card{background:#fff;border-radius:14px;padding:12px;margin:10px 0;box-shadow:0 2px 8px #0001}
+.poster{width:100%;border-radius:12px;border:2px solid #fca5a5}
+.zoom{width:100%;height:300px;overflow:hidden;border-radius:12px;border:2px solid #b91c1c;display:flex;align-items:center;justify-content:center;background:#000;cursor:zoom-in;position:relative}
+.zoom img{width:100%;height:130%;object-fit:cover;object-position:center 15%;transform:scale(1.15);transition:transform .25s;margin-top:-12%}
+/* Hard crop: hides bottom ~25% where cell-name label sits for real1-real10.webp */
+.ad-card{background:linear-gradient(135deg,#fff7ed,#ffedd5);border:2px dashed #f59e0b;border-radius:12px;padding:14px;margin:10px 0;text-align:center}
+.ad-modal{display:none;position:fixed;inset:0;background:#000c;z-index:100;align-items:center;justify-content:center;padding:14px}
+.ad-box{background:#fff;border-radius:14px;padding:16px;max-width:420px;width:100%;text-align:center;border:3px solid #f59e0b}
+.stem{padding:12px;border:2px solid #cbd5e1;border-radius:10px;margin:6px 0;cursor:pointer;background:#fff;font-size:14px}
+.stem:active{transform:scale(.99)}
+.correct{background:#dcfce7!important;border-color:#16a34a!important}.wrong{background:#fee2e2!important;border-color:#ef4444!important}
+.btn{width:100%;padding:14px;background:#b91c1c;color:#FFD700;border:0;border-radius:10px;font-weight:bold;margin-top:8px;cursor:pointer;font-size:15px}
+.btn:disabled{opacity:.6}
+.btn-ghost{width:100%;padding:10px;background:#fff;color:#b91c1c;border:2px solid #b91c1c;border-radius:10px;font-weight:bold;margin-top:8px;cursor:pointer}
+.ref{font-size:12px;color:#475569;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:8px;padding:6px 8px;margin:8px 0;font-style:italic}
+.progress{height:8px;background:#fee2e2;border-radius:99px;overflow:hidden;margin:8px 0}
+.progress>div{height:100%;background:#b91c1c;width:0%;transition:width .3s}
+.badge{display:inline-block;background:#fef3c7;border:1px solid #f59e0b;color:#92400e;font-size:11px;font-weight:bold;border-radius:99px;padding:2px 8px;margin:2px}
+.modal{display:none;position:fixed;inset:0;background:#000d;z-index:99;align-items:center;justify-content:center;padding:10px}
+.modal img{max-width:100%;max-height:90vh;border-radius:12px;background:#fff}
+.intro-poster{width:100%;border-radius:12px;border:2px solid #b91c1c;margin:8px 0}
+.grid2{display:flex;gap:8px}.grid2>div{flex:1}
+.hint{font-size:11px;color:#64748b;text-align:center;margin-top:4px}
+</style>
+</head><body>
+<div class="header"><b>🔬 Applied Physiology Related to Blood Cells for MBBS Students</b><br><span style="font-size:13px">DR SM, Physiologist, Bangladesh</span><br><span class="badge">🩸 10 Cells Identify + Function Puzzle</span> <span class="badge">📱 Mobile Ready</span></div>
+
+<!-- START SCREEN -->
+<div class="card" id="startCard">
+<img src="10cells.jpg" class="intro-poster" alt="10 blood cells poster">
+<div style="font-weight:bold;font-size:15px;margin:6px 0">Can you identify all 10 blood cells by function?</div>
+<div style="font-size:13px;color:#334155">5 normal WBCs + Platelet + 4 abnormal RBCs. Each question gives a clinical stem + real smear image. Tap image to zoom. +10 per correct, -0 per wrong. Aim 90+ for Blood Expert 🏆</div>
+<div class="grid2"><div style="background:#fef2f2;border-radius:10px;padding:8px;text-align:center;font-size:12px"><b>Q1-5</b><br>Neutrophil, Lymphocyte, Eosinophil, Monocyte, Basophil</div><div style="background:#f0fdf4;border-radius:10px;padding:8px;text-align:center;font-size:12px"><b>Q6-10</b><br>Platelet, Sickle, Spherocyte, Target, IDA cell</div></div>
+<button class="btn" onclick="startQuiz()">▶ Start Puzzle</button>
+<div class="ref">References: Guyton & Hall Textbook of Medical Physiology (WBCs, Platelets) • Ganong's Review of Medical Physiology (WBC functions) • Hoffbrand's Essential Haematology (RBC morphology & anemias).</div>
+</div>
+
+<!-- QUIZ SCREEN -->
+<div class="card" id="quizCard" style="display:none">
+<div style="display:flex;justify-content:space-between;font-weight:bold"><span id="qno"></span><span>Score: <span id="sc">0</span>/100</span></div>
+<div class="progress"><div id="bar"></div></div>
+<div class="zoom" onclick="openZoom()"><img id="cellimg" src="real1.webp"></div>
+<div style="text-align:center;font-size:11px;color:#b91c1c" id="lbl">Tap image to zoom 🔍</div>
+<div id="qtext" style="font-weight:bold;margin:10px 0;font-size:14px"></div>
+<div class="ref" id="reftext" style="display:none"></div>
+<div id="area"></div>
+<div id="explain" style="display:none;background:#fffbeb;border:1px solid #f59e0b;border-radius:10px;padding:10px;margin-top:8px;font-size:13px"></div>
+<div class="grid2"><button class="btn" id="next" style="display:none" onclick="nextQ()">Next Cell →</button><button class="btn-ghost" id="retry" style="display:none" onclick="retryQ()">↻ Retry</button></div>
+<button class="btn-ghost" id="restart" onclick="location.reload()" style="display:none">↻ Play Again</button>
+</div>
+<div class="modal" id="modal" onclick="this.style.display='none'"><img id="bigimg" src="real1.webp" style="object-fit:cover;object-position:center 15%;height:80vh;width:auto;max-width:95vw"></div>
+<div class="ad-modal" id="adModal"><div class="ad-box">
+<div style="font-size:11px;color:#b45309;font-weight:bold;letter-spacing:1px">ADVERTISEMENT • <span id="adCount">0</span>/3</div>
+<div style="font-size:22px;margin:6px 0">🩸📚 MBBS Exam Booster</div>
+<div style="font-size:13px;color:#334155"><b>DR SM Physiology Notes + 500 SBAs</b><br>Applied Physiology • Blood • CVS • Renal<br><span style="color:#b91c1c;font-weight:bold">50% Off for Blood Puzzle Players!</span></div>
+<!-- Replace below block with your AdSense / custom ad code -->
+<div class="ad-card"><div style="font-size:12px;color:#92400e">Your Ad Goes Here<br><span style="font-size:11px">Paste Google AdSense / affiliate banner code here</span></div></div>
+<button class="btn" id="adClose" disabled>Close in 5s…</button>
+</div></div>
+
+<script>
+const CELLS=[
+{img:"real1.webp", name:"Neutrophil", q:"A 24-year-old man is admitted with high fever, tachycardia, and a painful skin abscess that later drains thick yellow fluid. His total WBC count is markedly raised. Looking at the peripheral smear cell shown above, which cell is it?", opts:["Lymphocyte","Eosinophil","Neutrophil","Monocyte","Basophil"], best:2, exp:"Neutrophil — the polymorphonuclear phagocyte of acute inflammation, 50-70% of WBCs, with a 2-5 lobed nucleus. Functions: chemotaxis, phagocytosis of bacteria, and pus formation.", ref:"Reference: Ganong's Review of Medical Physiology — White Blood Cells, Neutrophils in acute inflammation."},
+{img:"real2.webp", name:"Lymphocyte", q:"A 7-year-old girl develops fever, sore throat, and generalized lymph node enlargement after a viral illness. Her differential count shows a marked rise in small agranular cells. Looking at the peripheral smear cell shown above, which cell is it?", opts:["Lymphocyte","Neutrophil","Eosinophil","Monocyte","Basophil"], best:0, exp:"Lymphocyte — the agranular cell of specific immunity, 20-40% of WBCs, with a large round nucleus and thin rim of cytoplasm. Functions: B cells produce antibodies (humoral immunity), T cells provide cell-mediated immunity.", ref:"Reference: Guyton Textbook of Medical Physiology — Lymphocytes, acquired immunity."},
+{img:"real3.webp", name:"Eosinophil", q:"A 14-year-old boy known to have bronchial asthma presents with prolonged cough, wheeze, and passage of worms in stool. One of the WBCs is raised. Looking at the peripheral smear cell shown above, which cell is it?", opts:["Eosinophil","Neutrophil","Lymphocyte","Monocyte","Basophil"], best:0, exp:"Eosinophil — the granulocyte raised in allergy and helminthic infestation, 1-4% of WBCs, with a bilobed nucleus and coarse red-orange granules. Functions: defense against parasites and modulation of IgE-mediated allergy.", ref:"Reference: Ganong's Review of Medical Physiology — Eosinophils in allergy and parasitic infection."},
+{img:"real4.webp", name:"Monocyte", q:"A 40-year-old man with prolonged low-grade fever, weight loss, and hilar lymphadenopathy is diagnosed with pulmonary tuberculosis. Looking at the peripheral smear cell shown above, which cell is it?", opts:["Neutrophil","Lymphocyte","Eosinophil","Basophil","Monocyte"], best:4, exp:"Monocyte — the largest WBC (3-8%), precursor of the tissue macrophage system. Functions: phagocytosis in chronic inflammation, antigen presentation, and cytokine secretion.", ref:"Reference: Guyton Textbook of Medical Physiology — Monocyte-macrophage system, chronic inflammation."},
+{img:"real5.webp", name:"Basophil", q:"A 30-year-old woman develops sudden lip swelling, urticaria, and bronchospasm minutes after taking an NSAID. Her serum histamine level is markedly elevated. Looking at the peripheral smear cell shown above, which cell is it?", opts:["Neutrophil","Lymphocyte","Monocyte","Eosinophil","Basophil"], best:4, exp:"Basophil — the rarest WBC (<1%), the circulating counterpart of the tissue mast cell, with dense basophilic granules. Functions: releases heparin and histamine in immediate hypersensitivity and anaphylaxis.", ref:"Reference: Guyton Textbook of Medical Physiology — Basophils, mast cells and allergy."},
+{img:"real6.webp", name:"Platelet", q:"A 22-year-old man with dengue fever develops gum bleeding, petechiae, and a platelet count of 35,000 per microliter. His bleeding time is prolonged but clotting time is normal. Looking at the peripheral smear field shown above, which formed element is reduced?", opts:["Neutrophil","Platelet","Lymphocyte","Monocyte","Eosinophil"], best:1, exp:"Platelet — the anucleate fragment of megakaryocytes, 150,000-400,000 per microliter. Functions: adhesion to collagen via von Willebrand factor, aggregation, and plugging in primary hemostasis; deficiency prolongs bleeding time.", ref:"Reference: Guyton Textbook of Medical Physiology — Platelets and primary hemostasis."},
+{img:"real7.webp", name:"Sickle cell", q:"A 9-year-old boy is admitted with severe bony pain in the hands and chest, jaundice, and a hemoglobin of 7 g/dL. He has had similar painful crises since early childhood. Looking at the peripheral smear cell shown above, which abnormal red cell is it?", opts:["Spherocyte","Target cell","Normal discocyte","Sickle cell","Elliptocyte"], best:3, exp:"Sickle cell — the crescent-shaped RBC of sickle cell anemia, from a beta-6 Glu to Val point mutation in HbS. Functions affected: HbS polymerizes in low oxygen, causing vaso-occlusive crises, hemolysis, and impaired oxygen delivery.", ref:"Reference: Hoffbrand's Essential Haematology — Sickle cell disease, hemoglobin polymerization."},
+{img:"real8.webp", name:"Spherocyte", q:"A 12-year-old girl presents with chronic jaundice, splenomegaly, gallstones, and a family history of anemia requiring splenectomy in her father. Her MCHC is raised and osmotic fragility is increased. Looking at the peripheral smear cell shown above, which abnormal red cell is it?", opts:["Target cell","Macrocyte","Sickle cell","Spherocyte","Schistocyte"], best:3, exp:"Spherocyte — the dense spherical RBC of hereditary spherocytosis, from spectrin or ankyrin membrane defects. Functions affected: loss of deformability leads to splenic trapping and extravascular hemolysis with raised MCHC.", ref:"Reference: Hoffbrand's Essential Haematology — Hereditary spherocytosis, red cell membrane."},
+{img:"real9.webp", name:"Target cell", q:"A 32-year-old man with beta-thalassemia trait and chronic liver disease shows a hemoglobin of 10 g/dL with anisopoikilocytosis. His smear contains many thin cells with excess membrane relative to hemoglobin. Looking at the peripheral smear cell shown above, which abnormal red cell is it?", opts:["Spherocyte","Sickle cell","Schistocyte","Target cell","Bite cell"], best:3, exp:"Target cell — the thin RBC with excess surface membrane that piles hemoglobin centrally. Seen in thalassemia, HbC disease, liver disease, and iron deficiency; reflects a membrane-to-hemoglobin mismatch.", ref:"Reference: Hoffbrand's Essential Haematology — Target cells in thalassemia and liver disease."},
+{img:"real10.webp", name:"Iron-deficient red cell", q:"A 26-year-old pregnant woman in her third trimester complains of fatigue, palpitations, and craving for clay. Her hemoglobin is 8.5 g/dL, MCV 68 fL, MCH 22 pg, and ferritin is very low. Looking at the peripheral smear cell shown above, which red cell abnormality is it?", opts:["Macrocytic cell of B12 deficiency","Spherocyte","Microcytic hypochromic cell","Sickle cell","Target cell"], best:2, exp:"Microcytic hypochromic red cell of iron deficiency — small pale cells from impaired heme synthesis, with low MCV, MCH, and ferritin. The commonest anemia of pregnancy, chronic blood loss, and poor iron intake.", ref:"Reference: Hoffbrand's Essential Haematology — Iron deficiency anemia, microcytic hypochromic blood film."}
+];
+let idx=0,score=0,wrong=[],adsShown=0;
+function startQuiz(){document.getElementById('startCard').style.display='none';document.getElementById('quizCard').style.display='block';idx=0;score=0;wrong=[];showQ();window.scrollTo(0,0);}
+function openZoom(){let s=document.getElementById('cellimg').src;document.getElementById('bigimg').src=s;document.getElementById('modal').style.display='flex';}
+function showQ(){
+ let c=CELLS[idx];
+ document.getElementById('cellimg').src=c.img;
+ document.getElementById('lbl').innerText=`Cell ${idx+1} of ${CELLS.length} — Tap to zoom 🔍`;
+ document.getElementById('qno').innerText=`Q ${idx+1}/${CELLS.length}`;
+ document.getElementById('bar').style.width=(idx/CELLS.length*100)+'%';
+ document.getElementById('qtext').innerText=c.q;
+ let rf=document.getElementById('reftext'); rf.style.display='block'; rf.innerText=c.ref;
+ let h=''; c.opts.forEach((s,i)=>{h+=`<div class="stem" onclick="check(${i})"><b>${String.fromCharCode(65+i)}.</b> ${s}</div>`});
+ document.getElementById('area').innerHTML=h;
+ document.getElementById('explain').style.display='none'; document.getElementById('next').style.display='none'; document.getElementById('retry').style.display='none';
+}
+function check(i){
+ let c=CELLS[idx]; document.querySelectorAll('.stem').forEach((el,ii)=>{if(ii==c.best) el.classList.add('correct'); if(ii==i && i!=c.best) el.classList.add('wrong'); el.style.pointerEvents='none';});
+ let ex=document.getElementById('explain'); ex.style.display='block';
+ let refHtml=`<div class="ref" style="margin:8px 0 0">📖 ${c.ref}</div>`;
+ if(i==c.best){score+=10; ex.innerHTML=`✅ Correct: ${String.fromCharCode(65+c.best)} — ${c.name}<br>${c.exp}${refHtml}`;} else {wrong.push(idx+1); ex.innerHTML=`❌ The answer is ${String.fromCharCode(65+c.best)} — ${c.name}<br>${c.exp}${refHtml}`;}
+ document.getElementById('sc').innerText=score; document.getElementById('next').style.display='block'; document.getElementById('retry').style.display='block';
+}
+function retryQ(){showQ();}
+function maybeAd(next){
+ // Advertise after every 3 puzzles: after Q3, Q6, Q9 (before showing Q4, Q7, Q10)
+ let answered=idx+1;
+ if(answered%3===0 && answered<CELLS.length){showAd(next);} else {next();}
+}
+function showAd(next){
+ adsShown++;
+ document.getElementById('adCount').innerText=adsShown;
+ document.getElementById('adModal').style.display='flex';
+ let s=5; let btn=document.getElementById('adClose');
+ btn.disabled=true; btn.innerText=`Close in ${s}s…`;
+ btn.onclick=null;
+ let t=setInterval(()=>{s--; if(s<=0){clearInterval(t); btn.disabled=false; btn.innerText='Continue Puzzle →'; btn.onclick=()=>{document.getElementById('adModal').style.display='none'; next();};} else {btn.innerText=`Close in ${s}s…`;}},1000);
+}
+function nextQ(){maybeAd(()=>{idx++; if(idx>=CELLS.length){finish(); return;} showQ(); window.scrollTo(0,0);});}
+function finish(){
+ document.getElementById('bar').style.width='100%';
+ let grade=score>=90?'🏆 Blood Expert!':score>=70?'🌟 Very Good!':score>=50?'👍 Pass — Revise smears':'📚 Needs Revision';
+ document.getElementById('qno').innerText=`Done! ${score}/100`;
+ document.getElementById('lbl').innerText=grade;
+ document.getElementById('cellimg').src='10cells.jpg';
+ document.getElementById('qtext').innerHTML=`<b>${grade}</b><br><span style="font-size:13px">You scored ${score}/100.`+(wrong.length?` Review Q: ${wrong.join(', ')}.`:' Perfect — all 10 correct! 🎉')+`</span>`;
+ document.getElementById('reftext').style.display='block';
+ document.getElementById('reftext').innerText='References: Guyton & Hall (WBCs, platelets) • Ganong (WBC functions) • Hoffbrand (RBC morphology). Images: real peripheral smears real1-real10.webp.';
+ document.getElementById('area').innerHTML=CELLS.map((c,i)=>`<div style="font-size:12px;background:${wrong.includes(i+1)?'#fee2e2':'#dcfce7'};border-radius:8px;padding:6px;margin:4px 0"><b>Q${i+1}:</b> ${c.name} — ${String.fromCharCode(65+c.best)}. ${c.opts[c.best]}</div>`).join('');
+ document.getElementById('explain').style.display='none';
+ document.getElementById('next').style.display='none'; document.getElementById('retry').style.display='none';
+ document.getElementById('restart').style.display='block'; window.scrollTo(0,0);
+}
+</script>
+</body></html>
