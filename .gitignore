@@ -1,14 +1,5 @@
-# Render deploy - exclude dev / large files (keep live site fast)
-*.docx
-*_orig.webp
-10cells.webp
-cell_raw.webp
-crop_labels.py
-run_local.py
-RUN_LOCAL.bat
-DEPLOY_RENDER.bat
-PUSH_GITHUB.bat
-tmp.txt
+# Minimal ignore - push whole code to Render/GitHub
 __pycache__/
 *.pyc
 .git/
+
