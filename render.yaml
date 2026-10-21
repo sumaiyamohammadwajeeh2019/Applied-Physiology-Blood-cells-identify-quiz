@@ -1,7 +1,7 @@
 services:
-  # Static Site - FREE on Render (no sleep, CDN, free TLS)
+  # web - FREE on Render (no sleep, CDN, free TLS)
   # Dashboard: New > Static Site > connect repo > Build: echo static > Publish: ./
-  - type: web
+  - type: static
     name: blood-10-cells-puzzle
     runtime: static
     branch: main
